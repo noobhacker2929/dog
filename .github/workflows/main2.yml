@@ -1,0 +1,33 @@
+name: Auto Ping Websites
+
+on:
+  schedule:
+    - cron: '0 0 */3 * *' # 3 நாட்களுக்கு ஒருமுறை
+  workflow_dispatch: # நீங்களாக இயக்க
+
+jobs:
+  ping_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping URLs 20 times with User-Agent
+        run: |
+          echo "Starting the ping process..."
+          for i in {1..20}
+          do
+            echo "Ping attempt: $i"
+            
+            # Ping first URL with User-Agent and ignore failures to keep loop running
+            curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36" \
+                 -s -L -o /dev/null -w "URL 1 Status: %{http_code}\n" "https://2009shiny.gamer.gd/" || echo "URL 1 failed but continuing..."
+            
+            # Ping second URL with User-Agent
+            curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36" \
+                 -s -L -o /dev/null -w "URL 2 Status: %{http_code}\n" "https://23122009shiny.gt.tc/?i=1" || echo "URL 2 failed but continuing..."
+            
+            if [ $i -lt 20 ]; then
+              # 20 முறையும் சேர்த்து மொத்தம் 30 நிமிடங்கள் வர வேண்டும் என்பதால் 90 நொடிகள் இடைவெளி
+              echo "Waiting 90 seconds..."
+              sleep 90
+            fi
+          done
+          echo "Process finished successfully."
