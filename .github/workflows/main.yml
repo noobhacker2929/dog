@@ -2,9 +2,8 @@ name: Auto Ping Websites
 
 on:
   schedule:
-    # 3 நாட்களுக்கு ஒருமுறை நள்ளிரவு 12 மணிக்கு (UTC) வேலை செய்யும்
-    - cron: '0 0 */3 * *'
-  workflow_dispatch: # நீங்கள் விரும்பும் போது மேனுவலாக இயக்கிக்கொள்ளலாம்
+    - cron: '0 0 */3 * *' # 3 நாட்களுக்கு ஒருமுறை
+  workflow_dispatch: # மேனுவலாக இயக்க
 
 jobs:
   ping_job:
@@ -17,17 +16,16 @@ jobs:
           do
             echo "Ping attempt: $i"
             
-            # முதல் URL-ஐ ping செய்தல்
-            curl -s -o /dev/null -w "URL 1 HTTP Status: %{http_code}\n" https://2009shiny.gamer.gd/
+            # Ping first URL
+            curl -s -o /dev/null -L -w "URL 1 HTTP Status: %{http_code}\n" https://2009shiny.gamer.gd/
             
-            # இரண்டாவது URL-ஐ ping செய்தல்
-            curl -s -o /dev/null -w "URL 2 HTTP Status: %{http_code}\n" "https://23122009shiny.gt.tc/?i=1"
+            # Ping second URL
+            curl -s -o /dev/null -L -w "URL 2 HTTP Status: %{http_code}\n" "https://23122009shiny.gt.tc/?i=1"
             
             if [ $i -lt 20 ]; then
-              # ஒவ்வொரு ping-க்கும் இடையே 90 நொடிகள் (1.5 நிமிடம்) காத்திருக்கவும். 
-              # 20 முறை முடிவடையும் போது மொத்தம் 30 நிமிடங்கள் ஆகும்.
-              echo "Waiting for next ping..."
+              echo "Waiting 90 seconds before next ping..."
               sleep 90
             fi
           done
-          echo "Ping process completed successfully."
+          echo "All 20 pings completed."
+          
